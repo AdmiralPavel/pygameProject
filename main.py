@@ -1,4 +1,5 @@
 import os
+import random
 
 import pygame
 
@@ -7,6 +8,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 WIDTH = 800
 HEIGHT = 600
 FPS = 30
@@ -83,8 +85,51 @@ class Player(pygame.sprite.Sprite):
                 self.flag = not self.flag
 
 
+class Meteor(pygame.sprite.Sprite):
+    speedy = 0
+    speedx = 0
+
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((20, 20))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.y = 0
+        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        self.speedy = random.randrange(8, 12)
+        self.speedx = random.randrange(-5, 5)
+
+    def update(self, *args, **kwargs):
+        self.rect.y += self.speedy
+        self.rect.x += self.speedx
+        if self.rect.top > HEIGHT:
+            self.rect.y = 0
+            self.rect.x = random.randrange(WIDTH - self.rect.width)
+            self.speedy = random.randrange(8, 12)
+class Bullet(pygame.sprite.Sprite):
+    speedy = -15
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((10, 20))
+        self.image.fill(YELLOW)
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+
+    def update(self, *args, **kwargs) -> None:
+        self.rect.y += self.speedy
+        if self.rect.bottom <0:
+            self.kill()
+
+
 all_sprites = pygame.sprite.Group()
+meteors = pygame.sprite.Group()
 player = Player()
+for i in range(12):
+    m = Meteor()
+    meteors.add(m)
+    all_sprites.add(m)
+
 all_sprites.add(player)
 
 pygame.init()
@@ -101,6 +146,9 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     all_sprites.update()
+    hits = pygame.sprite.spritecollide(player, meteors, False)
+    if hits:
+        running = False
     screen.fill(BLUE)
     all_sprites.draw(screen)
     pygame.display.flip()
