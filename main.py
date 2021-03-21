@@ -18,6 +18,8 @@ img_folder = os.path.join(game_folder, 'img')
 player_img = pygame.image.load(os.path.join(img_folder, 'p1_front.png'))
 player_img_hurt = pygame.image.load(os.path.join(img_folder, 'p1_hurt.png'))
 player_img_duck = pygame.image.load(os.path.join(img_folder, 'p1_duck.png'))
+all_sprites = pygame.sprite.Group()
+shots = pygame.sprite.Group()
 
 
 class Player(pygame.sprite.Sprite):
@@ -39,6 +41,10 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image = player_img
         keystate = pygame.key.get_pressed()
+        if keystate[pygame.K_LSHIFT]:
+            bullet = Bullet(self.rect.x, self.rect.top)
+            all_sprites.add(bullet)
+            shots.add(bullet)
         if keystate[pygame.K_SPACE]:
             self.image = player_img_duck
         if keystate[pygame.K_LEFT]:
@@ -94,7 +100,7 @@ class Meteor(pygame.sprite.Sprite):
         self.image = pygame.Surface((20, 20))
         self.image.fill(RED)
         self.rect = self.image.get_rect()
-        self.rect.y = 0
+        self.rect.y = random.randrange(-50, 0)
         self.rect.x = random.randrange(WIDTH - self.rect.width)
         self.speedy = random.randrange(8, 12)
         self.speedx = random.randrange(-5, 5)
@@ -103,11 +109,15 @@ class Meteor(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         self.rect.x += self.speedx
         if self.rect.top > HEIGHT:
-            self.rect.y = 0
+            self.rect.y = random.randrange(-50, 0)
             self.rect.x = random.randrange(WIDTH - self.rect.width)
             self.speedy = random.randrange(8, 12)
+            self.speedx = random.randrange(-5, 5)
+
+
 class Bullet(pygame.sprite.Sprite):
     speedy = -15
+
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((10, 20))
@@ -118,14 +128,13 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self, *args, **kwargs) -> None:
         self.rect.y += self.speedy
-        if self.rect.bottom <0:
+        if self.rect.bottom < 0:
             self.kill()
 
 
-all_sprites = pygame.sprite.Group()
 meteors = pygame.sprite.Group()
 player = Player()
-for i in range(12):
+for i in range(8):
     m = Meteor()
     meteors.add(m)
     all_sprites.add(m)
