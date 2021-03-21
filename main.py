@@ -19,7 +19,7 @@ player_img = pygame.image.load(os.path.join(img_folder, 'p1_front.png'))
 player_img_hurt = pygame.image.load(os.path.join(img_folder, 'p1_hurt.png'))
 player_img_duck = pygame.image.load(os.path.join(img_folder, 'p1_duck.png'))
 all_sprites = pygame.sprite.Group()
-shots = pygame.sprite.Group()
+bullets = pygame.sprite.Group()
 
 
 class Player(pygame.sprite.Sprite):
@@ -44,7 +44,7 @@ class Player(pygame.sprite.Sprite):
         if keystate[pygame.K_LSHIFT]:
             bullet = Bullet(self.rect.x, self.rect.top)
             all_sprites.add(bullet)
-            shots.add(bullet)
+            bullets.add(bullet)
         if keystate[pygame.K_SPACE]:
             self.image = player_img_duck
         if keystate[pygame.K_LEFT]:
@@ -155,6 +155,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     all_sprites.update()
+    shots = pygame.sprite.groupcollide(meteors, bullets, True, True)
+    for shot in shots:
+        m = Meteor()
+        all_sprites.add(m)
+        meteors.add(m)
     hits = pygame.sprite.spritecollide(player, meteors, False)
     if hits:
         running = False
