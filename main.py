@@ -19,7 +19,8 @@ img_folder = os.path.join(game_folder, 'img')
 player_img = pygame.image.load(os.path.join(img_folder, 'p1_front.png'))
 player_img_hurt = pygame.image.load(os.path.join(img_folder, 'p1_hurt.png'))
 player_img_duck = pygame.image.load(os.path.join(img_folder, 'p1_duck.png'))
-background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (HEIGHT, WIDTH))
+meteor_img = pygame.image.load(os.path.join(img_folder, 'meteorBrown_med1.png'))
+background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (WIDTH, HEIGHT))
 background_rect = background.get_rect()
 all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
@@ -101,8 +102,7 @@ class Meteor(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((20, 20))
-        self.image.fill(RED)
+        self.image = meteor_img
         self.rect = self.image.get_rect()
         self.rect.y = random.randrange(-50, 0)
         self.rect.x = random.randrange(WIDTH - self.rect.width)
