@@ -19,7 +19,7 @@ img_folder = os.path.join(game_folder, 'img')
 player_img = pygame.image.load(os.path.join(img_folder, 'p1_front.png'))
 player_img_hurt = pygame.image.load(os.path.join(img_folder, 'p1_hurt.png'))
 player_img_duck = pygame.image.load(os.path.join(img_folder, 'p1_duck.png'))
-background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (800,600))
+background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (HEIGHT, WIDTH))
 background_rect = background.get_rect()
 all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
@@ -147,7 +147,6 @@ all_sprites.add(player)
 
 pygame.init()
 pygame.mixer.init()
-
 
 pygame.display.set_caption('My game')
 running = True
