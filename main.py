@@ -41,10 +41,6 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image = player_img
         keystate = pygame.key.get_pressed()
-        if keystate[pygame.K_LSHIFT]:
-            bullet = Bullet(self.rect.x, self.rect.top)
-            all_sprites.add(bullet)
-            bullets.add(bullet)
         if keystate[pygame.K_SPACE]:
             self.image = player_img_duck
         if keystate[pygame.K_LEFT]:
@@ -89,6 +85,11 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.image = player_img
                 self.flag = not self.flag
+
+    def shoot(self):
+        bullet = Bullet(self.rect.x, self.rect.top)
+        all_sprites.add(bullet)
+        bullets.add(bullet)
 
 
 class Meteor(pygame.sprite.Sprite):
@@ -154,6 +155,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LSHIFT:
+                player.shoot()
     all_sprites.update()
     shots = pygame.sprite.groupcollide(meteors, bullets, True, True)
     for shot in shots:
