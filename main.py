@@ -11,7 +11,7 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 WIDTH = 800
 HEIGHT = 600
-FPS = 60
+FPS = 30
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 game_folder = os.path.dirname(__file__)
@@ -19,7 +19,19 @@ img_folder = os.path.join(game_folder, 'img')
 player_img = pygame.image.load(os.path.join(img_folder, 'p1_front.png'))
 player_img_hurt = pygame.image.load(os.path.join(img_folder, 'p1_hurt.png'))
 player_img_duck = pygame.image.load(os.path.join(img_folder, 'p1_duck.png'))
-meteor_img = pygame.image.load(os.path.join(img_folder, 'meteorBrown_med1.png'))
+meteor_img_list = []
+for i in range(1,3):
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_med{i}.png')))
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_small{i}.png')))
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_big{i}.png')))
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_tiny{i}.png')))
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_med{i}.png')))
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_small{i}.png')))
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_big{i}.png')))
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_tiny{i}.png')))
+for i in range(3,5):
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_big{i}.png')))
+    meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_big{i}.png')))
 background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (WIDTH, HEIGHT))
 background_rect = background.get_rect()
 all_sprites = pygame.sprite.Group()
@@ -102,7 +114,7 @@ class Meteor(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = meteor_img
+        self.image = random.choice(meteor_img_list)
         self.rect = self.image.get_rect()
         self.rect.y = random.randrange(-50, 0)
         self.rect.x = random.randrange(WIDTH - self.rect.width)
