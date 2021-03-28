@@ -12,6 +12,7 @@ YELLOW = (255, 255, 0)
 WIDTH = 1800
 HEIGHT = 800
 FPS = 60
+scores = 0
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 game_folder = os.path.dirname(__file__)
@@ -38,6 +39,15 @@ background_rect = background.get_rect()
 all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 
+
+
+def draw_text(surf, text, size, x, y):
+    font_name = pygame.font.match_font('arial')
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text,True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
 
 class Player(pygame.sprite.Sprite):
     flag = True
@@ -184,11 +194,13 @@ while running:
         m = Meteor()
         all_sprites.add(m)
         meteors.add(m)
+        scores += 1
     hits = pygame.sprite.spritecollide(player, meteors, False, pygame.sprite.collide_circle)
     if hits:
         running = False
     screen.fill(BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
+    draw_text(screen, str(scores), 40, WIDTH / 2, 10)
     pygame.display.flip()
 pygame.quit()
