@@ -9,9 +9,9 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
-WIDTH = 800
-HEIGHT = 600
-FPS = 30
+WIDTH = 1800
+HEIGHT = 800
+FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 game_folder = os.path.dirname(__file__)
@@ -33,6 +33,7 @@ for i in range(3,5):
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_big{i}.png')))
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_big{i}.png')))
 background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (WIDTH, HEIGHT))
+laser_img = pygame.image.load(os.path.join(img_folder, 'laserBlue04.png'))
 background_rect = background.get_rect()
 all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
@@ -60,13 +61,13 @@ class Player(pygame.sprite.Sprite):
         if keystate[pygame.K_SPACE]:
             self.image = player_img_duck
         if keystate[pygame.K_LEFT]:
-            self.speedx = -8
+            self.speedx = -4
         if keystate[pygame.K_RIGHT]:
-            self.speedx = 8
+            self.speedx = 4
         if keystate[pygame.K_UP]:
-            self.speedy = -8
+            self.speedy = -4
         if keystate[pygame.K_DOWN]:
-            self.speedy = 8
+            self.speedy = 4
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         if self.rect.left > WIDTH:
@@ -118,8 +119,8 @@ class Meteor(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.y = random.randrange(-50, 0)
         self.rect.x = random.randrange(WIDTH - self.rect.width)
-        self.speedy = random.randrange(8, 12)
-        self.speedx = random.randrange(-5, 5)
+        self.speedy = random.randrange(4, 6)
+        self.speedx = random.randrange(-3, 3)
 
     def update(self, *args, **kwargs):
         self.rect.y += self.speedy
@@ -127,17 +128,16 @@ class Meteor(pygame.sprite.Sprite):
         if self.rect.top > HEIGHT:
             self.rect.y = random.randrange(-50, 0)
             self.rect.x = random.randrange(WIDTH - self.rect.width)
-            self.speedy = random.randrange(8, 12)
-            self.speedx = random.randrange(-5, 5)
+            self.speedy = random.randrange(4, 6)
+            self.speedx = random.randrange(-3, 3)
 
 
 class Bullet(pygame.sprite.Sprite):
-    speedy = -15
+    speedy = -8
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((10, 20))
-        self.image.fill(YELLOW)
+        self.image = laser_img
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
