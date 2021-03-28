@@ -1,6 +1,6 @@
 import os
 import random
-
+import time
 import pygame
 
 BLACK = (0, 0, 0)
@@ -20,7 +20,7 @@ player_img = pygame.image.load(os.path.join(img_folder, 'p1_front.png'))
 player_img_hurt = pygame.image.load(os.path.join(img_folder, 'p1_hurt.png'))
 player_img_duck = pygame.image.load(os.path.join(img_folder, 'p1_duck.png'))
 meteor_img_list = []
-for i in range(1,3):
+for i in range(1, 3):
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_med{i}.png')))
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_small{i}.png')))
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_big{i}.png')))
@@ -29,7 +29,7 @@ for i in range(1,3):
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_small{i}.png')))
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_big{i}.png')))
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_tiny{i}.png')))
-for i in range(3,5):
+for i in range(3, 5):
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_big{i}.png')))
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_big{i}.png')))
 background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (WIDTH, HEIGHT))
@@ -104,7 +104,7 @@ class Player(pygame.sprite.Sprite):
                 self.flag = not self.flag
 
     def shoot(self):
-        bullet = Bullet(self.rect.x, self.rect.top)
+        bullet = Bullet(self.rect.centerx, self.rect.top)
         all_sprites.add(bullet)
         bullets.add(bullet)
 
@@ -117,6 +117,7 @@ class Meteor(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = random.choice(meteor_img_list)
         self.rect = self.image.get_rect()
+        self.radius = int(self.rect.width / 2 * 0.85)
         self.rect.y = random.randrange(-50, 0)
         self.rect.x = random.randrange(WIDTH - self.rect.width)
         self.speedy = random.randrange(4, 6)
@@ -150,7 +151,7 @@ class Bullet(pygame.sprite.Sprite):
 
 meteors = pygame.sprite.Group()
 player = Player()
-for i in range(8):
+for i in range(1):
     m = Meteor()
     meteors.add(m)
     all_sprites.add(m)
@@ -162,8 +163,14 @@ pygame.mixer.init()
 
 pygame.display.set_caption('My game')
 running = True
-
+old_time = time.time()
 while running:
+    new_time = time.time()
+    if new_time - old_time > 1:
+        old_time = new_time
+        m = Meteor()
+        meteors.add(m)
+        all_sprites.add(m)
     clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -177,7 +184,7 @@ while running:
         m = Meteor()
         all_sprites.add(m)
         meteors.add(m)
-    hits = pygame.sprite.spritecollide(player, meteors, False)
+    hits = pygame.sprite.spritecollide(player, meteors, False, pygame.sprite.collide_circle)
     if hits:
         running = False
     screen.fill(BLACK)
