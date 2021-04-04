@@ -21,7 +21,11 @@ img_folder = os.path.join(game_folder, 'img')
 snd_folder = os.path.join(game_folder, 'snd')
 pygame.mixer.init()
 shoot_sound = pygame.mixer.Sound(os.path.join(snd_folder, 'pew.wav'))
-explode_sounds = [pygame.mixer.Sound(os.path.join(snd_folder, 'expl3.wav')), pygame.mixer.Sound(os.path.join(snd_folder, 'expl6.wav'))]
+explode_sounds = [pygame.mixer.Sound(os.path.join(snd_folder, 'expl3.wav')),
+                  pygame.mixer.Sound(os.path.join(snd_folder, 'expl6.wav'))]
+pygame.mixer.music.load(os.path.join(snd_folder, 'music.ogg'))
+pygame.mixer.music.set_volume(0.4)
+pygame.mixer.music.play(loops=-1)
 player_img = pygame.image.load(os.path.join(img_folder, 'p1_front.png'))
 player_img_hurt = pygame.image.load(os.path.join(img_folder, 'p1_hurt.png'))
 player_img_duck = pygame.image.load(os.path.join(img_folder, 'p1_duck.png'))
