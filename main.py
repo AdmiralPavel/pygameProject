@@ -1,6 +1,7 @@
 import os
 import random
 import time
+
 import pygame
 
 BLACK = (0, 0, 0)
@@ -40,14 +41,14 @@ all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 
 
-
-def draw_text(surf, text, size, x, y):
+def draw_text(text, size, x, y):
     font_name = pygame.font.match_font('arial')
     font = pygame.font.Font(font_name, size)
-    text_surface = font.render(text,True, WHITE)
+    text_surface = font.render(text, True, WHITE)
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
-    surf.blit(text_surface, text_rect)
+    screen.blit(text_surface, text_rect)
+
 
 class Player(pygame.sprite.Sprite):
     flag = True
@@ -120,22 +121,35 @@ class Player(pygame.sprite.Sprite):
 
 
 class Meteor(pygame.sprite.Sprite):
-    speedy = 0
-    speedx = 0
+    def rotate(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > 50:
+            self.last_update = now
+            self.rot = (self.rot + self.rot_speed) % 360
+            new_image = pygame.transform.rotate(self.image_orig, self.rot)
+            old_center = self.rect.center
+            self.image = new_image
+            self.rect = self.image.get_rect()
+            self.rect.center = old_center
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = random.choice(meteor_img_list)
+        self.image_orig = random.choice(meteor_img_list)
+        self.image = self.image_orig.copy()
         self.rect = self.image.get_rect()
         self.radius = int(self.rect.width / 2 * 0.85)
         self.rect.y = random.randrange(-50, 0)
         self.rect.x = random.randrange(WIDTH - self.rect.width)
         self.speedy = random.randrange(4, 6)
         self.speedx = random.randrange(-3, 3)
+        self.rot_speed = random.randrange(-8, 8)
+        self.rot = 0
+        self.last_update = pygame.time.get_ticks()
 
     def update(self, *args, **kwargs):
         self.rect.y += self.speedy
         self.rect.x += self.speedx
+        self.rotate()
         if self.rect.top > HEIGHT:
             self.rect.y = random.randrange(-50, 0)
             self.rect.x = random.randrange(WIDTH - self.rect.width)
@@ -201,6 +215,6 @@ while running:
     screen.fill(BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
-    draw_text(screen, str(scores), 40, WIDTH / 2, 10)
+    draw_text(str(scores), 40, WIDTH / 2, 10)
     pygame.display.flip()
 pygame.quit()
