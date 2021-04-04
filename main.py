@@ -18,6 +18,10 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, 'img')
+snd_folder = os.path.join(game_folder, 'snd')
+pygame.mixer.init()
+shoot_sound = pygame.mixer.Sound(os.path.join(snd_folder, 'pew.wav'))
+explode_sounds = [pygame.mixer.Sound(os.path.join(snd_folder, 'expl3.wav')), pygame.mixer.Sound(os.path.join(snd_folder, 'expl6.wav'))]
 player_img = pygame.image.load(os.path.join(img_folder, 'p1_front.png'))
 player_img_hurt = pygame.image.load(os.path.join(img_folder, 'p1_hurt.png'))
 player_img_duck = pygame.image.load(os.path.join(img_folder, 'p1_duck.png'))
@@ -118,6 +122,7 @@ class Player(pygame.sprite.Sprite):
         bullet = Bullet(self.rect.centerx, self.rect.top)
         all_sprites.add(bullet)
         bullets.add(bullet)
+        shoot_sound.play()
 
 
 class Meteor(pygame.sprite.Sprite):
@@ -208,6 +213,7 @@ while running:
         m = Meteor()
         all_sprites.add(m)
         meteors.add(m)
+        random.choice(explode_sounds).play()
         scores += 1
     hits = pygame.sprite.spritecollide(player, meteors, False, pygame.sprite.collide_circle)
     if hits:
