@@ -13,7 +13,6 @@ YELLOW = (255, 255, 0)
 WIDTH = 1800
 HEIGHT = 800
 FPS = 60
-scores = 0
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 game_folder = os.path.dirname(__file__)
@@ -45,8 +44,6 @@ for i in range(3, 5):
 background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (WIDTH, HEIGHT))
 laser_img = pygame.image.load(os.path.join(img_folder, 'laserBlue04.png'))
 background_rect = background.get_rect()
-all_sprites = pygame.sprite.Group()
-bullets = pygame.sprite.Group()
 
 
 def draw_text(text, size, x, y):
@@ -182,49 +179,66 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 
-meteors = pygame.sprite.Group()
-player = Player()
-for i in range(1):
-    m = Meteor()
-    meteors.add(m)
-    all_sprites.add(m)
-
-all_sprites.add(player)
-
 pygame.init()
-pygame.mixer.init()
 
 pygame.display.set_caption('My game')
 running = True
 old_time = time.time()
-while running:
-    new_time = time.time()
-    if new_time - old_time > 1:
-        old_time = new_time
+play_again = True
+while play_again:
+    scores = 0
+    all_sprites = pygame.sprite.Group()
+    bullets = pygame.sprite.Group()
+    meteors = pygame.sprite.Group()
+    player = Player()
+    for i in range(1):
         m = Meteor()
         meteors.add(m)
         all_sprites.add(m)
-    clock.tick(FPS)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    all_sprites.add(player)
+    while running:
+        new_time = time.time()
+        if new_time - old_time > 1:
+            old_time = new_time
+            m = Meteor()
+            meteors.add(m)
+            all_sprites.add(m)
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LCTRL:
+                    player.shoot()
+        all_sprites.update()
+        shots = pygame.sprite.groupcollide(meteors, bullets, True, True)
+        for shot in shots:
+            m = Meteor()
+            all_sprites.add(m)
+            meteors.add(m)
+            random.choice(explode_sounds).play()
+            scores += 1
+        hits = pygame.sprite.spritecollide(player, meteors, False, pygame.sprite.collide_circle)
+        if hits:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LCTRL:
-                player.shoot()
-    all_sprites.update()
-    shots = pygame.sprite.groupcollide(meteors, bullets, True, True)
-    for shot in shots:
-        m = Meteor()
-        all_sprites.add(m)
-        meteors.add(m)
-        random.choice(explode_sounds).play()
-        scores += 1
-    hits = pygame.sprite.spritecollide(player, meteors, False, pygame.sprite.collide_circle)
-    if hits:
-        running = False
+        screen.fill(BLACK)
+        screen.blit(background, background_rect)
+        all_sprites.draw(screen)
+        draw_text(str(scores), 40, WIDTH / 2, 10)
+        pygame.display.flip()
     screen.fill(BLACK)
-    screen.blit(background, background_rect)
-    all_sprites.draw(screen)
-    draw_text(str(scores), 40, WIDTH / 2, 10)
+    draw_text('Game Over', 70, WIDTH / 2, HEIGHT / 2 - 200)
+
+    draw_text('Для продолжения нажмите любую клавишу. Для выхода нажмите Esc.', 40, WIDTH / 2, HEIGHT / 2)
     pygame.display.flip()
+    while play_again:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    play_again = False
+                else:
+                    running = True
+                    break
+        if running:
+            break
 pygame.quit()
