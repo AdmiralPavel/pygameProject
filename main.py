@@ -25,9 +25,7 @@ explode_sounds = [pygame.mixer.Sound(os.path.join(snd_folder, 'expl3.wav')),
 pygame.mixer.music.load(os.path.join(snd_folder, 'music.ogg'))
 pygame.mixer.music.set_volume(0.4)
 pygame.mixer.music.play(loops=-1)
-player_img = pygame.image.load(os.path.join(img_folder, 'p1_front.png'))
-player_img_hurt = pygame.image.load(os.path.join(img_folder, 'p1_hurt.png'))
-player_img_duck = pygame.image.load(os.path.join(img_folder, 'p1_duck.png'))
+player_img = pygame.image.load(os.path.join(img_folder, 'playerShip2_orange.png'))
 meteor_img_list = []
 for i in range(1, 3):
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_med{i}.png')))
@@ -69,13 +67,7 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.speedx = 0
         self.speedy = 0
-        if self.flag:
-            self.image = player_img_hurt
-        else:
-            self.image = player_img
         keystate = pygame.key.get_pressed()
-        if keystate[pygame.K_SPACE]:
-            self.image = player_img_duck
         if keystate[pygame.K_LEFT]:
             self.speedx = -4
         if keystate[pygame.K_RIGHT]:
@@ -88,36 +80,12 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         if self.rect.left > WIDTH:
             self.rect.right = 0
-            if self.flag:
-                self.image = player_img_hurt
-                self.flag = not self.flag
-            else:
-                self.image = player_img
-                self.flag = not self.flag
         if self.rect.right < 0:
             self.rect.left = WIDTH
-            if self.flag:
-                self.image = player_img_hurt
-                self.flag = not self.flag
-            else:
-                self.image = player_img
-                self.flag = not self.flag
         if self.rect.top > HEIGHT:
             self.rect.bottom = 0
-            if self.flag:
-                self.image = player_img_hurt
-                self.flag = not self.flag
-            else:
-                self.image = player_img
-                self.flag = not self.flag
         if self.rect.bottom < 0:
             self.rect.top = HEIGHT
-            if self.flag:
-                self.image = player_img_hurt
-                self.flag = not self.flag
-            else:
-                self.image = player_img
-                self.flag = not self.flag
 
     def shoot(self):
         bullet = Bullet(self.rect.centerx, self.rect.top)
