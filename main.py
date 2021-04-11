@@ -88,9 +88,16 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = HEIGHT
 
     def shoot(self):
-        bullet = Bullet(self.rect.centerx, self.rect.top)
-        all_sprites.add(bullet)
-        bullets.add(bullet)
+        temp_bullets = []
+        temp_bullets.append(Bullet(self.rect.centerx, self.rect.top))
+        if scores >= 10:
+            temp_bullets.append(
+                Bullet(self.rect.centerx - 10, self.rect.top, speedx=-5, image=pygame.transform.rotate(laser_img, 32)))
+            temp_bullets.append(
+                Bullet(self.rect.centerx + 10, self.rect.top, speedx=5, image=pygame.transform.rotate(laser_img, -32)))
+        for bullet in temp_bullets:
+            all_sprites.add(bullet)
+            bullets.add(bullet)
         shoot_sound.play()
 
 
@@ -134,15 +141,17 @@ class Meteor(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     speedy = -8
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, speedx=0, image=laser_img):
         pygame.sprite.Sprite.__init__(self)
-        self.image = laser_img
+        self.speedx = speedx
+        self.image = image
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
 
     def update(self, *args, **kwargs) -> None:
         self.rect.y += self.speedy
+        self.rect.x += self.speedx
         if self.rect.bottom < 0:
             self.kill()
 
