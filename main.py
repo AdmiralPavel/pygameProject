@@ -39,6 +39,9 @@ for i in range(1, 3):
 for i in range(3, 5):
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorGrey_big{i}.png')))
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_big{i}.png')))
+enemy_img_list = []
+for i in range(1, 6):
+    enemy_img_list.append(pygame.image.load(os.path.join(img_folder, f'enemyBlack{i}.png')))
 background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (WIDTH, HEIGHT))
 laser_img = pygame.image.load(os.path.join(img_folder, 'laserBlue04.png'))
 background_rect = background.get_rect()
@@ -101,6 +104,19 @@ class Player(pygame.sprite.Sprite):
         shoot_sound.play()
 
 
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = random.choice(enemy_img_list)
+        self.rect = self.image.get_rect()
+
+    def update(self, *args, **kwargs) -> None:
+        pass
+
+    def shoot(self):
+        pass
+
+
 class Meteor(pygame.sprite.Sprite):
     def rotate(self):
         now = pygame.time.get_ticks()
@@ -139,10 +155,10 @@ class Meteor(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
-    speedy = -8
 
-    def __init__(self, x, y, speedx=0, image=laser_img):
+    def __init__(self, x, y, speedx=0, image=laser_img, speedy=-8):
         pygame.sprite.Sprite.__init__(self)
+        self.speedy = speedy
         self.speedx = speedx
         self.image = image
         self.rect = self.image.get_rect()
