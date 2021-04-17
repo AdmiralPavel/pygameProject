@@ -45,6 +45,8 @@ for i in range(1, 6):
 background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (WIDTH, HEIGHT))
 laser_img = pygame.image.load(os.path.join(img_folder, 'laserBlue04.png'))
 background_rect = background.get_rect()
+with open('best_scores.txt', 'r') as f:
+    best_score = int(f.readline())
 
 
 def draw_text(text, size, x, y):
@@ -217,11 +219,14 @@ while play_again:
         screen.fill(BLACK)
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
-        draw_text(str(scores), 40, WIDTH / 2, 10)
+        draw_text("Счёт " + str(scores), 40, WIDTH / 2, 10)
+        draw_text("Лучший счёт " + str(best_score), 40, WIDTH - 150, 10)
         pygame.display.flip()
+    with open('best_scores.txt', 'w') as f:
+        best_score = max(best_score, scores)
+        f.write(str(best_score))
     screen.fill(BLACK)
     draw_text('Game Over', 70, WIDTH / 2, HEIGHT / 2 - 200)
-
     draw_text('Для продолжения нажмите любую клавишу. Для выхода нажмите Esc.', 40, WIDTH / 2, HEIGHT / 2)
     pygame.display.flip()
     while play_again:
