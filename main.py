@@ -26,6 +26,7 @@ pygame.mixer.music.load(os.path.join(snd_folder, 'music.ogg'))
 pygame.mixer.music.set_volume(0.4)
 pygame.mixer.music.play(loops=-1)
 player_img = pygame.image.load(os.path.join(img_folder, 'playerShip2_orange.png'))
+player_life_img = pygame.image.load(os.path.join(img_folder, 'playerLife2_orange.png'))
 meteor_img_list = []
 for i in range(1, 3):
     meteor_img_list.append(pygame.image.load(os.path.join(img_folder, f'meteorBrown_med{i}.png')))
@@ -56,6 +57,15 @@ def draw_text(text, size, x, y):
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
     screen.blit(text_surface, text_rect)
+
+
+class Live(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = player_life_img
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
 
 class Player(pygame.sprite.Sprite):
@@ -179,12 +189,20 @@ pygame.init()
 pygame.display.set_caption('My game')
 running = True
 old_time = time.time()
+timer = time.time()
 play_again = True
 while play_again:
     scores = 0
+    lives = 3
     all_sprites = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     meteors = pygame.sprite.Group()
+    lives_group = pygame.sprite.Group()
+    lives_list = []
+    for i in range(3):
+        live = Live(10 + i * 50, 10)
+        lives_list.append(live)
+        lives_group.add(live)
     player = Player()
     for i in range(1):
         m = Meteor()
@@ -215,10 +233,18 @@ while play_again:
             scores += 1
         hits = pygame.sprite.spritecollide(player, meteors, False, pygame.sprite.collide_circle)
         if hits:
-            running = False
+            new_timer = time.time()
+            if new_timer - timer >= 3:
+                if lives != 0:
+                    timer = time.time()
+                    lives -= 1
+                    lives_group.remove(lives_list.pop())
+                else:
+                    running = False
         screen.fill(BLACK)
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
+        lives_group.draw(screen)
         draw_text("Счёт " + str(scores), 40, WIDTH / 2, 10)
         draw_text("Лучший счёт " + str(best_score), 40, WIDTH - 150, 10)
         pygame.display.flip()
