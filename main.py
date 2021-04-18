@@ -10,6 +10,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+TRANSPARENT = (0, 0, 0, 0)
 WIDTH = 1600
 HEIGHT = 900
 FPS = 60
@@ -72,12 +73,23 @@ class Player(pygame.sprite.Sprite):
     flag = True
     speedx = 0
     speedy = 0
+    is_transparent = False
+    flicker = False
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+        self.timer = time.time()
         self.image = player_img
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH / 2, HEIGHT / 2)
+
+    def change_image(self):
+        self.timer = time.time()
+        if not self.is_transparent:
+            self.image.set_alpha(0)
+        else:
+            self.image.set_alpha(255)
+        self.is_transparent = not self.is_transparent
 
     def update(self):
         self.speedx = 0
@@ -101,6 +113,11 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = 0
         if self.rect.bottom < 0:
             self.rect.top = HEIGHT
+        if self.flicker:
+            if time.time() - timer >= 1:
+                self.change_image()
+        elif self.is_transparent:
+            self.is_transparent = False
 
     def shoot(self):
         temp_bullets = []
@@ -232,15 +249,18 @@ while play_again:
             random.choice(explode_sounds).play()
             scores += 1
         hits = pygame.sprite.spritecollide(player, meteors, False, pygame.sprite.collide_circle)
-        if hits:
-            new_timer = time.time()
-            if new_timer - timer >= 3:
+        new_timer = time.time()
+        if new_timer - timer >= 3:
+            player.flicker = False
+            if hits:
                 if lives != 0:
                     timer = time.time()
                     lives -= 1
                     lives_group.remove(lives_list.pop())
                 else:
                     running = False
+        else:
+            player.flicker = True
         screen.fill(BLACK)
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
