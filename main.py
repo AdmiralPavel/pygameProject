@@ -116,8 +116,8 @@ class Player(pygame.sprite.Sprite):
         if self.flicker:
             if time.time() - timer >= 1:
                 self.change_image()
-        elif self.is_transparent:
-            self.is_transparent = False
+        else:
+            self.image.set_alpha(255)
 
     def shoot(self):
         temp_bullets = []
@@ -206,7 +206,7 @@ pygame.init()
 pygame.display.set_caption('My game')
 running = True
 old_time = time.time()
-timer = time.time()
+timer = time.time() - 3
 play_again = True
 while play_again:
     scores = 0
@@ -256,11 +256,10 @@ while play_again:
                 if lives != 0:
                     timer = time.time()
                     lives -= 1
+                    player.flicker = True
                     lives_group.remove(lives_list.pop())
                 else:
                     running = False
-        else:
-            player.flicker = True
         screen.fill(BLACK)
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
