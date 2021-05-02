@@ -46,6 +46,7 @@ for i in range(1, 6):
     enemy_img_list.append(pygame.image.load(os.path.join(img_folder, f'enemyBlack{i}.png')))
 background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (WIDTH, HEIGHT))
 laser_img = pygame.image.load(os.path.join(img_folder, 'laserBlue04.png'))
+laser_enemy_img = pygame.image.load(os.path.join(img_folder, 'laserRed04.png'))
 background_rect = background.get_rect()
 with open('best_scores.txt', 'r') as f:
     best_score = int(f.readline())
@@ -134,6 +135,8 @@ class Player(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
+    timer = time.time() + random.randrange(2, 5)
+
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = random.choice(enemy_img_list)
@@ -141,16 +144,29 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = random.randrange(WIDTH - self.rect.width)
         self.rect.y = 50
         self.speedx = random.randrange(-5, 5)
+        self.speedy = random.randrange(-5, 5)
 
     def update(self, *args, **kwargs) -> None:
+        new_time = time.time()
+        if new_time >= self.timer:
+            self.speedx = random.randrange(-5, 5)
+            self.speedy = random.randrange(-5, 5)
+            self.shoot()
+            self.timer = time.time() + random.uniform(2, 5)
+
         self.rect.x += self.speedx
+        self.rect.y += self.speedy
         if self.rect.left > WIDTH:
             self.rect.right = 0
         if self.rect.right < 0:
             self.rect.left = WIDTH
+        if self.rect.top > HEIGHT / 3 or self.rect.bottom < 0:
+            self.speedy = -self.speedy
 
     def shoot(self):
-        pass
+        bullet = Bullet(self.rect.centerx, self.rect.bottom, speedy=8, image=laser_enemy_img)
+        all_sprites.add(bullet)
+        enemies.add(bullet)
 
 
 class Meteor(pygame.sprite.Sprite):
@@ -250,9 +266,9 @@ while play_again:
         all_sprites.update()
         shots = pygame.sprite.groupcollide(enemies, bullets, True, True)
         for shot in shots:
-            #m = Meteor()
-            #all_sprites.add(m)
-            #enemies.add(m)
+            # m = Meteor()
+            # all_sprites.add(m)
+            # enemies.add(m)
             random.choice(explode_sounds).play()
             scores += 1
         hits = pygame.sprite.spritecollide(player, enemies, False, pygame.sprite.collide_circle)
