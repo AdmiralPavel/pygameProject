@@ -138,9 +138,16 @@ class Enemy(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = random.choice(enemy_img_list)
         self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        self.rect.y = 50
+        self.speedx = random.randrange(-5, 5)
 
     def update(self, *args, **kwargs) -> None:
-        pass
+        self.rect.x += self.speedx
+        if self.rect.left > WIDTH:
+            self.rect.right = 0
+        if self.rect.right < 0:
+            self.rect.left = WIDTH
 
     def shoot(self):
         pass
@@ -213,7 +220,7 @@ while play_again:
     lives = 3
     all_sprites = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
-    meteors = pygame.sprite.Group()
+    enemies = pygame.sprite.Group()
     lives_group = pygame.sprite.Group()
     lives_list = []
     for i in range(3):
@@ -222,16 +229,16 @@ while play_again:
         lives_group.add(live)
     player = Player()
     for i in range(1):
-        m = Meteor()
-        meteors.add(m)
+        m = Enemy()
+        enemies.add(m)
         all_sprites.add(m)
     all_sprites.add(player)
     while running:
         new_time = time.time()
         if new_time - old_time > 1:
             old_time = new_time
-            m = Meteor()
-            meteors.add(m)
+            m = Enemy()
+            enemies.add(m)
             all_sprites.add(m)
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -241,14 +248,14 @@ while play_again:
                 if event.key == pygame.K_LCTRL:
                     player.shoot()
         all_sprites.update()
-        shots = pygame.sprite.groupcollide(meteors, bullets, True, True)
+        shots = pygame.sprite.groupcollide(enemies, bullets, True, True)
         for shot in shots:
-            m = Meteor()
-            all_sprites.add(m)
-            meteors.add(m)
+            #m = Meteor()
+            #all_sprites.add(m)
+            #enemies.add(m)
             random.choice(explode_sounds).play()
             scores += 1
-        hits = pygame.sprite.spritecollide(player, meteors, False, pygame.sprite.collide_circle)
+        hits = pygame.sprite.spritecollide(player, enemies, False, pygame.sprite.collide_circle)
         new_timer = time.time()
         if new_timer - timer >= 3:
             player.flicker = False
