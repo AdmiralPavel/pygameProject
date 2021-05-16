@@ -57,6 +57,7 @@ running = True
 old_time = time.time()
 timer = time.time() - 3
 play_again = True
+
 scores = 0
 lives = 3
 all_sprites = pygame.sprite.Group()

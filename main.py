@@ -55,8 +55,8 @@ def draw_text(text, size, x, y):
 
 
 while play_again:
-    scores = 0
-    lives = 3
+    variables.scores = 0
+    variables.lives = 3
     variables.all_sprites = pygame.sprite.Group()
     variables.bullets = pygame.sprite.Group()
     variables.enemies = pygame.sprite.Group()
@@ -93,7 +93,7 @@ while play_again:
             # all_sprites.add(m)
             # enemies.add(m)
             random.choice(explode_sounds).play()
-            scores += 1
+            variables.scores += 1
         hits = pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_circle)
         new_timer = time.time()
         if new_timer - timer >= 3:
@@ -110,9 +110,13 @@ while play_again:
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
         lives_group.draw(screen)
-        draw_text("Счёт " + str(scores), 40, WIDTH / 2, 10)
+        draw_text("Счёт " + str(variables.scores), 40, WIDTH / 2, 10)
         draw_text("Лучший счёт " + str(best_score), 40, WIDTH - 150, 10)
         pygame.display.flip()
+    all_sprites.empty()
+    enemies.empty()
+    lives_group.empty()
+    bullets.empty()
     with open('best_scores.txt', 'w') as f:
         best_score = max(best_score, scores)
         f.write(str(best_score))

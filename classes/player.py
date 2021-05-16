@@ -1,6 +1,8 @@
 import time
 
 import pygame
+
+import variables
 from classes.bullet import Bullet
 from variables import *
 class Player(pygame.sprite.Sprite):
@@ -56,7 +58,7 @@ class Player(pygame.sprite.Sprite):
     def shoot(self):
         temp_bullets = []
         temp_bullets.append(Bullet(self.rect.centerx, self.rect.top))
-        if scores >= 10:
+        if  variables.scores >= 10:
             temp_bullets.append(
                 Bullet(self.rect.centerx - 10, self.rect.top, speedx=-5, image=pygame.transform.rotate(laser_img, 32)))
             temp_bullets.append(
