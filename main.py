@@ -1,10 +1,10 @@
 import random
-import time
 
 import variables
 from classes.enemy import Enemy
 from classes.live import Live
 from classes.player import Player
+from classes.power_up import PowerUp
 from variables import *
 
 
@@ -55,6 +55,7 @@ def draw_text(text, size, x, y):
 
 
 while play_again:
+    powerup_timer = time.time()
     variables.scores = 0
     variables.lives = 3
     variables.all_sprites = pygame.sprite.Group()
@@ -73,6 +74,12 @@ while play_again:
         all_sprites.add(m)
     all_sprites.add(player)
     while running:
+        new_powerup_timer = time.time()
+        if new_powerup_timer - powerup_timer >= 20:
+            power_up = PowerUp()
+            powerup_group.add(power_up)
+            all_sprites.add(power_up)
+            powerup_timer = new_powerup_timer
         new_time = time.time()
         if new_time - old_time > 1:
             old_time = new_time
@@ -95,6 +102,9 @@ while play_again:
             random.choice(explode_sounds).play()
             variables.scores += 1
         hits = pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_circle)
+        powerup_hits = pygame.sprite.spritecollide(player, powerup_group, True, pygame.sprite.collide_circle)
+        if powerup_hits:
+            print(powerup_group)
         new_timer = time.time()
         if new_timer - timer >= 3:
             player.flicker = False

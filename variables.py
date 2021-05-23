@@ -43,6 +43,12 @@ for i in range(3, 5):
 enemy_img_list = []
 for i in range(1, 6):
     enemy_img_list.append(pygame.image.load(os.path.join(img_folder, f'enemyBlack{i}.png')))
+powerup_img_list = []
+powerup_img_list.append(pygame.image.load(os.path.join(img_folder, 'pill_blue.png')))
+powerup_img_list.append(pygame.image.load(os.path.join(img_folder, 'powerupBlue_bolt.png')))
+powerup_img_list.append(pygame.image.load(os.path.join(img_folder, 'powerupBlue_shield.png')))
+powerup_img_list.append(pygame.image.load(os.path.join(img_folder, 'powerupBlue_star.png')))
+
 background = pygame.transform.scale(pygame.image.load(os.path.join(img_folder, 'blue.png')).convert(), (WIDTH, HEIGHT))
 laser_img = pygame.image.load(os.path.join(img_folder, 'laserBlue04.png'))
 laser_enemy_img = pygame.image.load(os.path.join(img_folder, 'laserRed04.png'))
@@ -60,6 +66,7 @@ play_again = True
 
 scores = 0
 lives = 3
+powerup_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
