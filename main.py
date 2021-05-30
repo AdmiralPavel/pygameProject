@@ -75,7 +75,7 @@ while play_again:
     all_sprites.add(player)
     while running:
         new_powerup_timer = time.time()
-        if new_powerup_timer - powerup_timer >= 20:
+        if new_powerup_timer - powerup_timer >= 5:
             power_up = PowerUp()
             powerup_group.add(power_up)
             all_sprites.add(power_up)
@@ -102,9 +102,18 @@ while play_again:
             random.choice(explode_sounds).play()
             variables.scores += 1
         hits = pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_circle)
+        if len(powerup_group.spritedict.keys()):
+            temp_power_up = list(powerup_group.spritedict.keys())[0].type
         powerup_hits = pygame.sprite.spritecollide(player, powerup_group, True, pygame.sprite.collide_circle)
         if powerup_hits:
-            print(powerup_group)
+            if temp_power_up == 0:
+                lives += 1
+                live = Live(10 + len(lives_list) * 50, 10)
+                all_sprites.add(live)
+                lives_list.append(live)
+                lives_group.add(live)
+            elif temp_power_up == 3:
+                variables.scores += 10
         new_timer = time.time()
         if new_timer - timer >= 3:
             player.flicker = False
